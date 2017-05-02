@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -z "$BROWSER" ]; then
+    BROWSER=firefox
+fi
+
+if [ "$#" -eq 0 ]; then
+    $BROWSER https://nixos.org/
+else
+    for pkg in $@; do
+        url=$(nix-instantiate --eval -A $pkg.meta.homepage '<nixpkgs>' | sed 's/^"\(.*\)"$/\1/')
+        if ! [ -z "$url" ]; then
+            $BROWSER $url
+        fi
+    done
+fi

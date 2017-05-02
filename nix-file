@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ "$#" -eq 0 ]; then
+   echo "$0: Need a package name"
+else
+    for pkg in $@; do
+        file="$(nix-instantiate --eval -E "with import <nixpkgs> {}; (builtins.unsafeGetAttrPos ''name'' pkgs.$pkg).file" | sed 's/^"\(.*\)"$/\1/' | sed 's@^/nix/store/@@' | sed -E 's@^[^/]+/nix(pkgs|os)/@@')"
+        echo "$file"
+    done
+fi

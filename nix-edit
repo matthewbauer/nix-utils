@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -z "$EDITOR" ]; then
+    EDITOR=nano
+fi
+
+if [ "$#" -eq 0 ]; then
+    file=$(nix-instantiate --eval -E "<nixpkgs>" | sed 's/^"\(.*\)"$/\1/')/default.nix
+    $EDITOR $file
+else
+    for pkg in $@; do
+        file=$(nix-instantiate --eval -E "with import <nixpkgs> {}; (builtins.unsafeGetAttrPos ''name'' pkgs.$pkg).file" '<nixpkgs>' | sed 's/^"\(.*\)"$/\1/')
+        if ! [ -z "$file" ]; then
+            $EDITOR $file
+        fi
+    done
+fi

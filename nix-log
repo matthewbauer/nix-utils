@@ -1,0 +1,12 @@
+#!/bin/sh
+
+git_repo=$(nix-instantiate --eval -E "<nixpkgs>")
+
+if [ "$#" -eq 0 ]; then
+    git -C $git_repo log
+elif [ "$#" -eq 1 ]; then
+    file=$(./nix-file $1)
+    git -C $git_repo log $file
+else
+    echo "$0: failed can't handle more than 1 argument."
+fi

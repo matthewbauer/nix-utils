@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ "$#" -eq 0 ]; then
+   echo "$0: Need a package name"
+else
+    for pkg in $@; do
+        desc="$(nix-instantiate --eval -A $pkg.meta.description '<nixpkgs>' | sed 's/^"\(.*\)"$/\1/')"
+        if ! [ -z "$desc" ]; then
+            echo "$pkg: $desc"
+        fi
+    done
+fi
